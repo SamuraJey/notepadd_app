@@ -4,18 +4,31 @@
 
 struct termios orig_termios;
 
+struct editorConfig {
+    struct termios orig_termios;
+};
+struct editorConfig E;
+
+void die(const char *s) {
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+    write(STDOUT_FILENO, "\x1b[H", 3);
+
+    perror(s);
+    exit(1);
+}
 void disableRawMode() {
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
+        die("tcsetattr");
 }
 
 void enableRawMode() {
-  tcgetattr(STDIN_FILENO, &orig_termios);
-  atexit(disableRawMode);
+    if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) die("tcgetattr");
+    atexit(disableRawMode);
+    struct termios raw = E.orig_termios;
 
-  struct termios raw = orig_termios;
-  raw.c_lflag &= ~(ECHO | ICANON);
+    raw.c_lflag &= ~(ECHO | ICANON);
 
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
 int main() {
