@@ -7,8 +7,10 @@ struct termios orig_termios;
 
 struct editorConfig {
     struct termios orig_termios;
+  
     int screenrows;
     int screencols;
+
 };
 struct editorConfig E;
 
