@@ -4,6 +4,19 @@
 
 struct termios orig_termios;
 
+struct editorConfig {
+    struct termios orig_termios;
+};
+struct editorConfig E;
+
+void die(const char *s) {
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+    write(STDOUT_FILENO, "\x1b[H", 3);
+
+    perror(s);
+    exit(1);
+}
+
 void disableRawMode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 }
