@@ -46,6 +46,12 @@ void die(const char *s) {
   exit(1);
 }
 
+// error handling
+void die(const char* custom_msg) {
+    perror(custom_msg);  // print the mesage and description of errno of failed call
+    exit(1);             // return error val to terminal
+}
+
 void disableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
     die("tcsetattr");
